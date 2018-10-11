@@ -5,7 +5,7 @@ defmodule Cloner do
     response = HTTPotion.get url, headers: headers
     data = elem(Poison.decode(response.body), 1)
     clone_urls = Enum.map(data, fn(item) -> item["clone_url"] end)
-    result = Enum.each(clone_urls, fn(url) -> Task.async(fn -> execute_github_clone(url) end) end)
+    Enum.each(clone_urls, fn(url) -> spawn(fn -> execute_github_clone(url) end) end)
   end
 
   def execute_github_clone(clone_url) do
